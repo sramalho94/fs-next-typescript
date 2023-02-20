@@ -1,10 +1,16 @@
 import Link from 'next/link'
 
 async function getPosts() {
-  const res = await fetch('/api/getPosts')
+  const res = await fetch(`${process.env.BASE_URL}/api/getPosts`)
+  if (!res.ok) {
+    console.log(res)
+  }
+  return res.json()
 }
 
-export default function Home() {
+export default async function Home() {
+  const data: { id: number; title: string }[] = await getPosts()
+
   return (
     <main className="py-4 px-48">
       <Link
@@ -15,6 +21,11 @@ export default function Home() {
       >
         Go to the dashboard
       </Link>
+      {data.map((post) => (
+        <h1 key={post.id} className="text-lg py-6">
+          {post.title}
+        </h1>
+      ))}
     </main>
   )
 }
